@@ -1,0 +1,459 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Madrid}
+  \usecolortheme{rose}
+  \usefonttheme{structurebold}
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+}
+
+\usepackage[vietnamese]{babel}
+\usepackage{fontspec}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usetikzlibrary{arrows.meta,calc,positioning}
+
+\setmainfont{Arial}
+\setsansfont{Arial}
+\setmonofont{Consolas}
+\newfontfamily\displayfont{Times New Roman}
+
+\definecolor{AppleBlue}{HTML}{0071E3}
+\definecolor{AppleGreen}{HTML}{34C759}
+\definecolor{AppleOrange}{HTML}{FF9500}
+\definecolor{AppleMuted}{HTML}{6E6E73}
+\definecolor{AppleInk}{HTML}{1D1D1F}
+\definecolor{AppleBorder}{HTML}{D2D2D7}
+\definecolor{AppleSurface}{HTML}{F5F5F7}
+
+\setbeamercolor{structure}{fg=AppleBlue}
+\setbeamercolor{normal text}{fg=AppleInk,bg=white}
+\setbeamercolor{block title}{fg=white,bg=AppleBlue}
+\setbeamercolor{block body}{fg=AppleInk,bg=AppleSurface}
+\setbeamercolor{exampleblock title}{fg=white,bg=AppleGreen}
+\setbeamercolor{exampleblock body}{fg=AppleInk,bg=AppleSurface}
+\setbeamercolor{alertblock title}{fg=white,bg=AppleInk}
+\setbeamercolor{alertblock body}{fg=AppleInk,bg=AppleSurface}
+\setbeamerfont{frametitle}{family=\displayfont,size=\Large}
+\setbeamerfont{title}{family=\displayfont,size=\LARGE}
+
+\title[Hilbert \& Qubit Tuần 1]{Hilbert \& Qubit Tuần 1}
+\author{Self-learning QML}
+\date{\today}
+
+\AtBeginSection[]
+{
+  \begin{frame}[plain]
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}[plain]{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{Nền tảng}
+
+\begin{frame}{Vì sao cần Hilbert?}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+    \begin{block}{Bit cổ điển}
+      Bit chỉ có một trạng thái tại một thời điểm: `0` hoặc `1`.
+    \end{block}
+    \begin{block}{Qubit}
+      Qubit là vector phức đã chuẩn hóa, nên có thể mang chồng chất và pha.
+    \end{block}
+    \begin{block}{Mục tiêu tuần 1}
+      Đọc được qubit bằng 3 ngôn ngữ: đại số, hình học và code.
+    \end{block}
+
+    \column{0.48\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=1.0]
+      \draw[AppleBorder, line width=0.8pt] (0,0) circle (1.55);
+      \draw[AppleBorder, line width=0.55pt] (0,0) ellipse (1.55 and 0.55);
+      \draw[AppleBorder, line width=0.55pt] (0,-1.55) arc (-90:90:0.55 and 1.55);
+      \draw[AppleBlue, line width=1.2pt, -stealth] (0,0) -- (0.95,1.1);
+      \fill[AppleBlue] (0.95,1.1) circle (2pt);
+      \node[above] at (0,1.75) {$|0\rangle$};
+      \node[below] at (0,-1.75) {$|1\rangle$};
+      \node[right] at (1.15,1.1) {$|\psi\rangle$};
+    \end{tikzpicture}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Trạng thái qubit}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+    \begin{block}{Dạng tổng quát}
+      \small
+      \[
+        \begin{aligned}
+          |\psi\rangle &= \alpha|0\rangle + \beta|1\rangle \\
+          |\alpha|^2 + |\beta|^2 &= 1
+        \end{aligned}
+      \]
+    \end{block}
+    \begin{exampleblock}{Ý chính}
+      Hệ số là số phức, còn bình phương biên độ mới là xác suất.
+    \end{exampleblock}
+
+    \column{0.48\textwidth}
+    \begin{tikzpicture}[x=1cm,y=1cm,scale=0.86,transform shape]
+      \draw[draw=AppleBorder, fill=AppleSurface, rounded corners=8pt] (0,0) rectangle (5.0,2.6);
+      \draw[fill=AppleBlue, draw=AppleBlue] (0.85,0.45) rectangle (1.55,1.85);
+      \draw[fill=AppleGreen, draw=AppleGreen] (2.2,0.45) rectangle (3.35,1.15);
+      \node[anchor=south] at (1.2,1.85) {\scriptsize $|\alpha|^2$};
+      \node[anchor=south] at (2.8,1.15) {\scriptsize $|\beta|^2$};
+      \node at (1.2,0.2) {\scriptsize $|0\rangle$};
+      \node at (2.8,0.2) {\scriptsize $|1\rangle$};
+      \node[anchor=west] at (3.8,1.5) {\small vector trạng thái};
+      \node[anchor=west] at (3.8,1.1) {\small dự đoán đo};
+      \node[anchor=west] at (3.8,0.7) {\small trước khi đo};
+    \end{tikzpicture}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Bra-ket}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+    \begin{block}{Ket}
+      \centering {\Large $|\psi\rangle$}\par
+      Vector cột.
+    \end{block}
+    \column{0.31\textwidth}
+    \begin{block}{Bra}
+      \centering {\Large $\langle\psi|$}\par
+      Liên hợp chuyển vị.
+    \end{block}
+    \column{0.31\textwidth}
+    \begin{block}{Outer product}
+      \centering {\Large $|\psi\rangle\langle\phi|$}\par
+      Tạo toán tử hoặc $\rho$.
+    \end{block}
+  \end{columns}
+
+  \vspace{0.5em}
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.4cm]
+      \node[draw=AppleBorder, fill=AppleSurface, rounded corners=8pt, minimum width=3cm, minimum height=1cm] (k) {$|\psi\rangle$};
+      \node[draw=AppleBorder, fill=AppleSurface, rounded corners=8pt, right=2.0cm of k, minimum width=3cm, minimum height=1cm] (b) {$\langle\psi|$};
+      \draw[-{Stealth[length=2.2mm]}, line width=0.8pt, AppleBlue] (k) -- node[above, font=\scriptsize] {liên hợp chuyển vị} (b);
+    \end{tikzpicture}
+  \end{center}
+\vspace{0.15em}
+\begin{block}{Công thức lõi}
+  \small
+  \[
+    \begin{aligned}
+      |\psi\rangle &= \alpha|0\rangle + \beta|1\rangle \\
+      \langle\psi|\psi\rangle &= 1
+    \end{aligned}
+  \]
+\end{block}
+\end{frame}
+
+\section{Bloch}
+
+\begin{frame}{Mặt cầu Bloch}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.46\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=1.08]
+      \draw[AppleBorder, line width=0.8pt] (0,0) circle (2);
+      \draw[AppleBorder, line width=0.55pt] (0,0) ellipse (2 and 0.7);
+      \draw[AppleBorder, line width=0.55pt] (0,-2) arc (-90:90:0.7 and 2);
+      \draw[AppleBlue, line width=1.2pt, -stealth] (0,0) -- (1.2,1.35);
+      \fill[AppleBlue] (1.2,1.35) circle (2pt);
+      \node[above] at (0,2.15) {$|0\rangle$};
+      \node[below] at (0,-2.2) {$|1\rangle$};
+      \node[right] at (2.1,0) {$x$};
+      \node[anchor=west] at (1.3,1.45) {$\theta,\phi$};
+    \end{tikzpicture}
+
+    \column{0.48\textwidth}
+    \begin{block}{Hai góc đủ để định vị}
+      \begin{itemize}
+        \item $\theta$ điều khiển vị trí theo trục $z$
+        \item $\phi$ là pha tương đối
+      \end{itemize}
+    \end{block}
+    \begin{exampleblock}{Một ví dụ}
+      Nếu $|\alpha|=|\beta|$, trạng thái nằm trên xích đạo.
+    \end{exampleblock}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Pha tương đối}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.44\textwidth}
+    \begin{block}{Cùng xác suất}
+      \centering
+      \begin{tikzpicture}[scale=0.85]
+        \draw[AppleBorder, line width=0.7pt] (0,0) circle (1.1);
+        \draw[AppleBlue, line width=1.0pt, -stealth] (0,0) -- (0.85,0.55);
+      \end{tikzpicture}
+    \end{block}
+    \column{0.44\textwidth}
+    \begin{block}{Khác pha}
+      \centering
+      \begin{tikzpicture}[scale=0.85]
+        \draw[AppleBorder, line width=0.7pt] (0,0) circle (1.1);
+        \draw[AppleOrange, line width=1.0pt, -stealth] (0,0) -- (0.15,0.99);
+        \draw[AppleGreen, line width=1.0pt, -stealth] (0,0) -- (-0.55,0.85);
+      \end{tikzpicture}
+    \end{block}
+  \end{columns}
+
+  \begin{exampleblock}{Chốt}
+    Pha khác nhau làm giao thoa khác nhau, dù xác suất đo cơ bản giống nhau.
+  \end{exampleblock}
+\end{frame}
+
+\section{Tiến hóa}
+
+\begin{frame}{Unitary}
+  \begin{theorem}
+    Một toán tử unitary thỏa mãn
+    \[
+      U^\dagger U = I
+    \]
+    và bảo toàn chuẩn, tích vô hướng, cũng như khả năng đảo ngược của tiến hóa.
+  \end{theorem}
+
+  \vspace{0.4em}
+  \begin{center}
+    \begin{tikzpicture}[node distance=1.1cm]
+      \node[draw=AppleInk, fill=AppleInk, text=white, rounded corners=10pt, minimum width=3cm, minimum height=1.15cm] (u) {$U^\dagger U = I$};
+      \node[draw=AppleBorder, fill=AppleSurface, rounded corners=8pt, font=\scriptsize, below left=0.65cm and 1.5cm of u, minimum width=2.8cm, minimum height=0.9cm] (a) {bảo toàn chuẩn};
+      \node[draw=AppleBorder, fill=AppleSurface, rounded corners=8pt, font=\scriptsize, below=0.65cm of u, minimum width=2.8cm, minimum height=0.9cm] (b) {bảo toàn góc};
+      \node[draw=AppleBorder, fill=AppleSurface, rounded corners=8pt, font=\scriptsize, below right=0.65cm and 1.5cm of u, minimum width=2.8cm, minimum height=0.9cm] (c) {đảo ngược được};
+      \draw[-{Stealth[length=2.2mm]}, AppleBlue] (u) -- (a);
+      \draw[-{Stealth[length=2.2mm]}, AppleBlue] (u) -- (b);
+      \draw[-{Stealth[length=2.2mm]}, AppleBlue] (u) -- (c);
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Hadamard}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.40\textwidth}
+    \begin{block}{Ma trận}
+      \[
+        H = \frac{1}{\sqrt{2}}
+        \begin{bmatrix}
+          1 & 1 \\
+          1 & -1
+        \end{bmatrix}
+      \]
+    \end{block}
+    \column{0.52\textwidth}
+    \begin{block}{Hiệu ứng}
+      \[
+        H|0\rangle = \frac{|0\rangle + |1\rangle}{\sqrt{2}}
+      \]
+    \end{block}
+    \begin{exampleblock}{Ý nghĩa}
+      Hadamard đổi cơ sở và tạo chồng chất cân bằng.
+    \end{exampleblock}
+  \end{columns}
+\end{frame}
+
+\section{Nhiều qubit}
+
+\begin{frame}{Tensor product}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.44\textwidth}
+    \begin{block}{Ghép trạng thái}
+      \centering
+      \begin{tikzpicture}[scale=0.9]
+        \node[draw=AppleBorder, fill=AppleSurface, rounded corners=8pt, minimum width=1.2cm, minimum height=1cm] at (0,0.9) {$|0\rangle$};
+        \node[draw=AppleBorder, fill=AppleSurface, rounded corners=8pt, minimum width=1.2cm, minimum height=1cm] at (0,-0.1) {$|1\rangle$};
+        \node[draw=AppleBorder, fill=AppleSurface, rounded corners=8pt, minimum width=1.2cm, minimum height=1cm] at (2.2,0.9) {$|0\rangle$};
+        \node[draw=AppleBorder, fill=AppleSurface, rounded corners=8pt, minimum width=1.2cm, minimum height=1cm] at (2.2,-0.1) {$|1\rangle$};
+        \draw[-{Stealth[length=2mm]}, AppleBlue] (1.35,0.4) -- (1.8,0.4);
+      \end{tikzpicture}
+      \[
+        |0\rangle \otimes |1\rangle \in \mathbb{C}^4
+      \]
+    \end{block}
+    \column{0.44\textwidth}
+    \begin{block}{Ghép toán tử}
+      \centering
+      \begin{tikzpicture}[scale=0.9]
+        \draw[AppleBorder, fill=AppleSurface, rounded corners=8pt] (0,0) rectangle (3.8,2.0);
+        \draw[AppleBlue, line width=0.8pt] (0.65,1.4) -- (3.15,1.4);
+        \draw[AppleBlue, line width=0.8pt] (0.65,0.65) -- (3.15,0.65);
+        \draw[AppleBorder, line width=0.8pt] (1.9,0.35) -- (1.9,1.75);
+      \end{tikzpicture}
+      \[
+        X \otimes Z
+      \]
+    \end{block}
+  \end{columns}
+
+  \begin{exampleblock}{Chốt}
+    Tensor ghép hệ bằng tích, nên số chiều tăng rất nhanh.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Bùng nổ chiều}
+  \begin{center}
+    \begin{tikzpicture}[x=1.2cm,y=0.95cm]
+      \foreach \n/\h/\c in {1/1.0/AppleBlue,2/2.0/AppleGreen,3/3.0/AppleOrange,4/4.0/AppleInk}{
+        \draw[draw=AppleBorder, fill=\c!12, rounded corners=6pt] (\n-0.35,0) rectangle (\n+0.35,\h);
+        \node[below] at (\n,0) {\scriptsize \n};
+      }
+      \node[anchor=west] at (4.9,2.2) {\Large $2^n$};
+      \draw[AppleBlue, line width=1.0pt, -{Stealth[length=2.5mm]}] (4.2,2.2) -- (4.75,2.2);
+      \node[anchor=west] at (5.45,2.2) {\small chiều không gian của $n$ qubit};
+    \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.6em}
+  \begin{center}
+    \large Một qubit thêm vào là nhân đôi toàn bộ không gian trạng thái.
+  \end{center}
+\end{frame}
+
+\section{Đo và mật độ}
+
+\begin{frame}{Đo}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+    \begin{block}{Trước đo}
+      \centering
+      \begin{tikzpicture}[scale=0.9]
+        \draw[AppleBorder, fill=AppleSurface, rounded corners=10pt] (0,0) rectangle (4.1,2.2);
+        \draw[AppleBlue, line width=1.0pt, -stealth] (1.0,1.0) -- (1.9,1.45);
+        \draw[AppleOrange, line width=1.0pt, -stealth] (1.0,1.0) -- (2.0,0.55);
+      \end{tikzpicture}
+    \end{block}
+    \column{0.46\textwidth}
+    \begin{block}{Sau đo}
+      \centering
+      \begin{tikzpicture}[scale=0.9]
+        \draw[AppleBorder, fill=AppleSurface, rounded corners=10pt] (0,0) rectangle (4.1,2.2);
+        \node[draw=AppleInk, fill=white, rounded corners=8pt, minimum width=1.0cm, minimum height=0.7cm] at (1.4,1.1) {0};
+        \draw[AppleBorder, line width=0.9pt, -{Stealth[length=2.2mm]}] (2.2,1.1) -- (3.2,1.1);
+        \node[draw=AppleBlue, fill=white, rounded corners=8pt, minimum width=1.0cm, minimum height=0.7cm] at (3.5,1.1) {$|0\rangle$};
+      \end{tikzpicture}
+    \end{block}
+  \end{columns}
+
+  \begin{alertblock}{Quy tắc Born}
+    $P(0)=|\alpha|^2,\quad P(1)=|\beta|^2$
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Ma trận mật độ}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+    \begin{block}{Trạng thái thuần}
+      \[
+        \rho = |\psi\rangle\langle\psi|
+      \]
+      \centering
+      \begin{tikzpicture}[scale=0.9]
+        \draw[AppleBorder, fill=AppleSurface, rounded corners=10pt] (0,0) rectangle (4.0,2.3);
+        \draw[AppleBlue, line width=1.0pt] (0.95,0.6) rectangle (3.1,1.7);
+      \end{tikzpicture}
+    \end{block}
+    \column{0.46\textwidth}
+    \begin{block}{Trạng thái hỗn hợp}
+      \[
+        \rho = \sum_i p_i |\psi_i\rangle\langle\psi_i|
+      \]
+      \centering
+      \begin{tikzpicture}[scale=0.9]
+        \draw[AppleBorder, fill=AppleSurface, rounded corners=10pt] (0,0) rectangle (4.0,2.3);
+        \draw[AppleOrange, line width=1.0pt] (0.9,0.55) rectangle (1.8,1.15);
+        \draw[AppleGreen, line width=1.0pt] (2.05,0.55) rectangle (3.1,1.45);
+        \draw[AppleBlue, line width=1.0pt] (1.45,1.1) rectangle (2.55,1.85);
+      \end{tikzpicture}
+    \end{block}
+  \end{columns}
+
+  \vspace{0.2em}
+  \begin{block}{Ba điều phải kiểm}
+    \centering $\rho=\rho^\dagger \qquad \mathrm{Tr}(\rho)=1 \qquad \mathrm{Tr}(\rho^2)\le 1$
+  \end{block}
+\end{frame}
+
+\section{Thực hành}
+
+\begin{frame}[fragile]{NumPy kiểm chứng}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+    \begin{block}{Mã tối thiểu}
+      \begingroup\scriptsize
+\begin{verbatim}
+import numpy as np
+X = np.array([
+    [0,1],
+    [1,0]
+], complex)
+Z = np.array([
+    [1,0],
+    [0,-1]
+], complex)
+XZ = np.kron(X, Z)
+print(XZ)
+\end{verbatim}
+      \endgroup
+    \end{block}
+    \column{0.46\textwidth}
+    \begin{block}{Khi dùng}
+      \begin{itemize}
+        \item xác nhận tensor product
+        \item debug mạch nhỏ
+        \item nối công thức với số liệu
+      \end{itemize}
+    \end{block}
+    \begin{exampleblock}{Ý nghĩa}
+      Kiểm tra công thức bằng dữ liệu thật thay vì chỉ tin vào trực giác.
+    \end{exampleblock}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Tự kiểm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+    \begin{block}{1}
+      Vector phức và chuẩn hóa.
+    \end{block}
+    \column{0.31\textwidth}
+    \begin{block}{2}
+      $\theta$ và $\phi$.
+    \end{block}
+    \column{0.31\textwidth}
+    \begin{block}{3}
+      Kiểm chứng bằng NumPy.
+    \end{block}
+  \end{columns}
+
+  \vspace{0.35em}
+  \begin{exampleblock}{Takeaway}
+    Hilbert cho ngôn ngữ, Bloch cho hình dung, unitary cho tiến hóa, tensor cho ghép hệ, đo cho kết quả.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Kết luận}
+  \begin{center}
+    \vfill
+    {\displayfont\fontsize{26}{30}\selectfont Hilbert. Bloch. Unitary. Tensor. Đo.\par}
+    \vspace{0.75em}
+    {\normalsize\color{AppleMuted}Tuần 1 chỉ cần dựng đúng khung này, rồi các tuần sau mới đẩy sang mạch và thuật toán.\par}
+    \vfill
+  \end{center}
+\end{frame}
+
+\end{document}
